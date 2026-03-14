@@ -21,4 +21,4 @@ const NewsletterBox = () => {
   )
 }
 
-export default NewsLetterBox
+export default NewsletterBox
