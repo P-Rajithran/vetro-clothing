@@ -5,131 +5,195 @@ import { assets } from '../assets/assets';
 import RelatedProducts from '../components/RelatedProducts';
 
 const Product = () => {
+  const { productId } = useParams();
+  const { products, currency, addToCart } = useContext(ShopContext);
+  const [productData, setProductData] = useState(false);
+  const [image, setImage] = useState('')
+  const [size, setSize] = useState('')
+  const [activeTab, setActiveTab] = useState('description')
 
-const {productId}=useParams();
-const {products,currency,addToCart}=useContext(ShopContext);
-const [productData,setProductData]=useState(false);
-const[image,setImage]=useState('')
-const [size,setSize]=useState('')
-
-const fetchProductData=async()=>{
-
-products.map((item)=>{
-  if(item._id===productId){
-    setProductData(item)
-    setImage(item.image[0])
-    
-    
-    return null;
+  const getImgUrl = (raw) => {
+    if (!raw) return '/placeholder.png';
+    if (raw.startsWith('http')) return raw;
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+    return `${backendUrl}${raw.startsWith('/') ? '' : '/'}${raw}`;
   }
-})
-}
 
-useEffect(()=>{
- fetchProductData(); 
-},[productId,products])
+  const fetchProductData = async () => {
+    products.map((item) => {
+      if (item._id === productId) {
+        setProductData(item);
+        setImage(item.image[0]);
+        return null;
+      }
+    });
+  }
 
-  return productData? (
-    <div className='border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100'>
-  {/* -------- Product Data -------- */}
-  <div className='flex gap-12 sm:gap-12 flex-col sm:flex-row'>
+  useEffect(() => { fetchProductData(); }, [productId, products]);
 
-    {/* -------- Product Image -------- */}
-    <div className='flex-1 flex flex-col-reverse gap-3 sm:flex-row'>
-      {/* Image thumbnails */}
-      <div className='flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full'>
-        {
-          productData.image.map((item, index) => (
+  return productData ? (
+    <div className='pt-10' style={{ borderTop: '1px solid #C9A84C30' }}>
+
+      <div className='flex gap-12 flex-col sm:flex-row'>
+
+        {/* Images */}
+        <div className='flex-1 flex flex-col-reverse gap-3 sm:flex-row'>
+          {/* Thumbnails */}
+          <div className='flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18%] w-full gap-2'>
+            {productData.image.map((item, index) => (
+              <img
+                onClick={() => setImage(item)}
+                src={getImgUrl(item)}
+                key={index}
+                className='w-[23%] sm:w-full sm:mb-2 flex-shrink-0 cursor-pointer object-cover'
+                style={{
+                  aspectRatio: '1',
+                  border: image === item ? '1px solid #C9A84C' : '1px solid transparent',
+                  opacity: image === item ? 1 : 0.6,
+                  transition: 'all 0.3s ease'
+                }}
+                alt="Thumbnail"
+              />
+            ))}
+          </div>
+
+          {/* Main Image */}
+          <div className='w-full sm:w-[80%] overflow-hidden' style={{ background: '#F0EDE6' }}>
             <img
-              onClick={() => setImage(item.startsWith('http') ? item : (import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000') + (item.startsWith('/') ? '' : '/') + item)} 
-              src={item.startsWith('http') ? item : (import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000') + (item.startsWith('/') ? '' : '/') + item} 
-              key={index} 
-              className='w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer' 
-              alt="Product Thumbnail" 
+              className='w-full h-full object-cover transition-all duration-500'
+              style={{ maxHeight: '600px', objectFit: 'cover' }}
+              src={getImgUrl(image)}
+              alt="Product"
+              onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder.png' }}
             />
-          ))
-        }
-      </div>
+          </div>
+        </div>
 
-      {/* Main product image */}
-      <div className='w-full sm:w-[80%] flex items-center justify-center'>
-        <img className='w-full h-full max-h-[600px] object-contain' src={(image && image.startsWith && image.startsWith('http')) ? image : ((import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000') + (image && image.startsWith && image.startsWith('/') ? '' : '/') + image)} alt="Main Product" onError={(e)=>{e.target.onerror=null; e.target.src='/placeholder.png'}} />
-      </div>
-    </div>
+        {/* Product Info */}
+        <div className='flex-1 py-2'>
+          {/* Category badge */}
+          <p className='text-xs tracking-widest mb-3' style={{ color: '#C9A84C', fontFamily: 'Montserrat, sans-serif' }}>
+            {productData.category?.toUpperCase()} · {productData.subCategory?.toUpperCase()}
+          </p>
 
-    {/* -------- Product Info -------- */}
-    <div className='flex-1'>
-      {/* Product Name */}
-      <h1 className='font-medium text-2xl mt-2'>{productData.name}</h1>
+          {/* Name */}
+          <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '32px', fontWeight: '400', color: '#1A2E1A', lineHeight: '1.2' }}>
+            {productData.name}
+          </h1>
 
-      {/* Product Rating */}
-      <div className='flex items-center gap-1 mt-2'>
-        <img src={assets.star_icon} alt="Star Icon" className="w-3.5" />
-        <img src={assets.star_icon} alt="Star Icon" className="w-3.5" />
-        <img src={assets.star_icon} alt="Star Icon" className="w-3.5" />
-        <img src={assets.star_icon} alt="Star Icon" className="w-3.5" />
-        <img src={assets.star_dull_icon} alt="Star Dull Icon" className="w-3.5" />
-        <p className='pl-2'>(122)</p>
-      </div>
+          {/* Rating */}
+          <div className='flex items-center gap-1 mt-3'>
+            {[1, 2, 3, 4].map(i => (
+              <img key={i} src={assets.star_icon} alt="" className="w-3" />
+            ))}
+            <img src={assets.star_dull_icon} alt="" className="w-3" />
+            <p className='text-xs ml-2' style={{ color: '#6B7B6B' }}>(122 reviews)</p>
+          </div>
 
-      {/* Product Price */}
-      <p className='mt-5 text-3xl font-medium'>{currency}{productData.price}</p>
+          {/* Gold divider */}
+          <div style={{ width: '40px', height: '1px', background: '#C9A84C', margin: '20px 0' }} />
 
-      {/* Product Description */}
-      <p className='mt-5 text-gray-500 md:w-4/5'>{productData.description}</p>
+          {/* Price */}
+          <p style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '36px', color: '#C9A84C', fontWeight: '400' }}>
+            {currency}{productData.price}
+          </p>
 
-      {/* Product Size Selection */}
-      <div className='flex flex-col gap-4 my-8'>
-        <p>Select Size</p>
-        <div className='flex gap-2'>
-          {productData.sizes?.map((item, index) => (
-            <button
-              onClick={() => setSize(item)} 
-              className={`border py-2 px-4 bg-gray-100 ${item === size ? 'border-orange-500' : ''}`}
-              key={index}
-            >
-              {item}
-            </button>
-          ))}
+          {/* Description */}
+          <p className='mt-4 text-sm font-light leading-relaxed' style={{ color: '#6B7B6B', fontFamily: 'Montserrat, sans-serif' }}>
+            {productData.description}
+          </p>
+
+          {/* Size Selection */}
+          <div className='mt-8'>
+            <p className='text-xs tracking-widest mb-4' style={{ color: '#1A2E1A', fontFamily: 'Montserrat, sans-serif' }}>
+              SELECT SIZE
+            </p>
+            <div className='flex gap-2 flex-wrap'>
+              {productData.sizes?.map((item, index) => (
+                <button
+                  onClick={() => setSize(item)}
+                  key={index}
+                  className='text-xs tracking-widest transition-all duration-300'
+                  style={{
+                    padding: '10px 20px',
+                    border: item === size ? '1px solid #1A2E1A' : '1px solid #C9A84C40',
+                    background: item === size ? '#1A2E1A' : 'transparent',
+                    color: item === size ? '#C9A84C' : '#1A2E1A',
+                    fontFamily: 'Montserrat, sans-serif',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Add to Cart */}
+          <button
+            onClick={() => size ? addToCart(productData._id, size) : alert("Please select a size!")}
+            className='mt-8 w-full sm:w-auto text-xs tracking-widest transition-all duration-300'
+            style={{
+              background: '#1A2E1A',
+              color: '#C9A84C',
+              border: '1px solid #1A2E1A',
+              padding: '16px 48px',
+              fontFamily: 'Montserrat, sans-serif',
+              cursor: 'pointer',
+              letterSpacing: '3px'
+            }}
+            onMouseEnter={e => { e.target.style.background = '#C9A84C'; e.target.style.color = '#1A2E1A'; e.target.style.borderColor = '#C9A84C'; }}
+            onMouseLeave={e => { e.target.style.background = '#1A2E1A'; e.target.style.color = '#C9A84C'; e.target.style.borderColor = '#1A2E1A'; }}
+          >
+            ADD TO CART
+          </button>
+
+          {/* Policy */}
+          <div className='mt-8 flex flex-col gap-2'>
+            {[
+              '✦ 100% Original product',
+              '✦ Cash on delivery available',
+              '✦ Easy return within 7 days'
+            ].map((p, i) => (
+              <p key={i} className='text-xs font-light' style={{ color: '#6B7B6B', letterSpacing: '0.5px' }}>{p}</p>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Add to Cart Button */}
-      <button 
-        onClick={() => size ? addToCart(productData._id, size) : alert("Please select a size!")} 
-        className='bg-black text-white px-8 py-3 active:bg-gray-700'
-      >
-        ADD TO CART
-      </button>
-
-      {/* Additional Product Info */}
-      <hr className='mt-8 sm:w-4/5'/>
-      <div className='text-sm text-gray-500 flex flex-col gap-1'>
-        <p>100% Original product.</p>
-        <p>Cash on delivery is available on this product.</p>
-        <p>Easy return and exchange policy within 7 days.</p>
+      {/* Description Tab */}
+      <div className='mt-20'>
+        <div className='flex gap-0'>
+          {['description', 'reviews'].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className='text-xs tracking-widest px-8 py-4 transition-all duration-300'
+              style={{
+                background: activeTab === tab ? '#1A2E1A' : 'transparent',
+                color: activeTab === tab ? '#C9A84C' : '#6B7B6B',
+                border: '1px solid #C9A84C30',
+                fontFamily: 'Montserrat, sans-serif',
+                cursor: 'pointer'
+              }}
+            >
+              {tab === 'description' ? 'DESCRIPTION' : 'REVIEWS (122)'}
+            </button>
+          ))}
+        </div>
+        <div className='p-8 text-sm font-light leading-relaxed' style={{ border: '1px solid #C9A84C20', color: '#6B7B6B' }}>
+          {activeTab === 'description' ? (
+            <p>{productData.description} This piece is crafted with premium materials, ensuring comfort and durability. Perfect for any occasion, it embodies the Vetro philosophy of blending style with purpose.</p>
+          ) : (
+            <p>122 verified customer reviews. Average rating: 4.2/5. Customers love the quality, fit, and unique design of this piece.</p>
+          )}
+        </div>
       </div>
+
+      {/* Related Products */}
+      <RelatedProducts category={productData.category} subCategory={productData.subCategory} />
     </div>
-  </div>
-
-  {/* -------- Product Description Tab -------- */}
-  <div className='mt-20'>
-    <div className='flex'>
-      <b className='border px-5 py-3 text-sm'>Description</b>
-      <p className='border px-5 py-3 text-sm'>Reviews(122)</p>
-    </div>
-    <div className='flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500'>
-      <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Similique repellat, impedit non totam quod exercitationem ex officiis earum soluta fuga blanditiis. Placeat error nesciunt excepturi, autem earum necessitatibus vitae commodi?</p>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic numquam facere, quasi quae architecto harum expedita. Similique amet, quisquam et eveniet nemo ab eos officia, sunt distinctio blanditiis aspernatur tenetur?</p>
-    </div>
-  </div>
-
-  {/* -------- Related Products -------- */}
-  <RelatedProducts category={productData.category} subCategory={productData.subCategory}/>
-
-</div>
-
-  ) : <div className='opacity-0'></div>
+  ) : <div className='opacity-0' />
 }
 
 export default Product

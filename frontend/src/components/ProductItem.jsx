@@ -5,28 +5,15 @@ import { Link } from 'react-router-dom';
 const ProductItem = ({ id, image, name, price }) => {
   const { currency } = useContext(ShopContext);
 
-  // Handle image - either from array or single value
   const getImageUrl = () => {
     let imageUrl = null;
-    
-    // Extract first image from array or use direct value
     if (Array.isArray(image) && image.length > 0 && image[0]) {
       imageUrl = image[0];
     } else if (typeof image === 'string' && image) {
       imageUrl = image;
     }
-    
-    // Validate URL - use placeholder if missing or invalid
-    if (!imageUrl) {
-      return '/placeholder.png';
-    }
-    
-    // If it's already a full URL (http/https), use it directly
-    if (imageUrl.startsWith('http')) {
-      return imageUrl;
-    }
-    
-    // For relative paths, construct backend URL
+    if (!imageUrl) return '/placeholder.png';
+    if (imageUrl.startsWith('http')) return imageUrl;
     const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
     return `${backendUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
   };
@@ -34,23 +21,37 @@ const ProductItem = ({ id, image, name, price }) => {
   const imgSrc = getImageUrl();
 
   const handleImageError = (e) => {
-    e.target.onerror = null; // Prevent infinite loop
+    e.target.onerror = null;
     e.target.src = '/placeholder.png';
   };
 
   return (
-    <Link className='text-gray-700 cursor-pointer' to={`/product/${id}`}>
-      <div className='overflow-hidden w-full h-full'>
-        <img 
-          className='w-full h-full object-cover hover:scale-110 transition ease-in-out' 
-          src={imgSrc} 
-          alt={name} 
+    <Link className='cursor-pointer group product-card block' to={`/product/${id}`}>
+      {/* Image Container */}
+      <div className='overflow-hidden relative' style={{ aspectRatio: '3/4', background: '#F0EDE6' }}>
+        <img
+          className='w-full h-full object-cover transition-transform duration-700 group-hover:scale-105'
+          src={imgSrc}
+          alt={name}
           onError={handleImageError}
           loading="lazy"
         />
+        {/* Gold overlay on hover */}
+        <div className='absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4'
+          style={{ background: 'linear-gradient(to top, rgba(26,46,26,0.6) 0%, transparent 60%)' }}>
+          <span className='text-xs tracking-widest font-light' style={{ color: '#C9A84C' }}>VIEW DETAILS</span>
+        </div>
       </div>
-      <p className='pt-3 pb-1 text-sm'>{name}</p>
-      <p className='text-sm font-medium'>{currency}{price}</p>
+
+      {/* Product Info */}
+      <div className='pt-3 pb-1'>
+        <p className='text-xs tracking-wide font-light leading-5 truncate' style={{ color: '#1A2E1A', fontFamily: 'Montserrat, sans-serif' }}>{name}</p>
+        <div className='flex items-center justify-between mt-1'>
+          <p className='text-sm font-medium' style={{ color: '#C9A84C', fontFamily: 'Cormorant Garamond, serif', fontSize: '15px' }}>
+            {currency}{price}
+          </p>
+        </div>
+      </div>
     </Link>
   );
 };
