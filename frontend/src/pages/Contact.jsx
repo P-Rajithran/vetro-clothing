@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/assets'
-import NewsLetterBox from '../components/NewsLetterBox'
+import NewsletterBox from '../components/NewsletterBox'
 
 const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
@@ -146,7 +146,7 @@ const Contact = () => {
       </div>
 
       <div className='px-8 sm:px-16'>
-        <NewsLetterBox />
+        <NewsletterBox />
       </div>
     </div>
   )

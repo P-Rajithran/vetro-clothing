@@ -1,6 +1,6 @@
 import React from 'react'
 import { assets } from '../assets/assets'
-import NewsLetterBox from '../components/NewsLetterBox'
+import NewsletterBox from '../components/NewsletterBox'
 
 const About = () => {
   return (
@@ -118,7 +118,7 @@ const About = () => {
       </div>
 
       <div className='px-8 sm:px-16'>
-        <NewsLetterBox />
+        <NewsletterBox />
       </div>
     </div>
   )
