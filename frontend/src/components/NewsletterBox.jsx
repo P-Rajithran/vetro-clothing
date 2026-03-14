@@ -1,6 +1,6 @@
 import React from 'react'
 
-const NewsLetterBox = () => {
+const NewsletterBox = () => {
 
   const onSubmitHandler=(event)=>{
     event.preventDefault();
