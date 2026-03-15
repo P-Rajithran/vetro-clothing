@@ -18,7 +18,13 @@ const port = process.env.PORT || 4000
 
 // Middlewares — before everything
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000', 'https://vetro-clothing.vercel.app'],
+    origin: [
+        'http://localhost:5173', 
+        'http://localhost:5174', 
+        'http://localhost:3000',
+        'https://vetro-clothing.vercel.app',
+        'https://vetro-clothing-1kzx.vercel.app'
+    ],
     credentials: true
 }))
 app.use(express.json())
