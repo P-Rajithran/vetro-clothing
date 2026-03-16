@@ -18,32 +18,35 @@ import AddProduct from './pages/AddProduct';
 import DebugProducts from './pages/DebugProducts';
 import 'react-toastify/dist/ReactToastify.css';
 
-
-
-
-
 const App = () => {
   return (
-    <div className='px-4 sm:px-[7vw] md:px-[5vw] lg:px-[3vw]'>
-      <ToastContainer/>
-      <Navbar />
-      <SearchBar/>
-      
-      <Routes>
-         <Route path='/' element={<Home/>}/>
-         <Route path='/collection' element ={<Collection/>}/>
-         <Route path='/about'  element={<About/>}/>
-         <Route path='contact' element={<Contact/>}/>
-         <Route path='/product/:productId' element={<Product/>}/>
-         <Route path='/cart' element={<Cart/>}/>
-         <Route path='/login' element={<Login/>} />
-         <Route path='/place-order' element={<PlaceOrder/>} />
-         <Route path='/orders' element={<Orders/>} />
+    <>
+      {/* ✅ DEMO BANNER — sits outside the padded div so it's full width */}
+      <div className="demo-banner">
+        ⚠️ This is a demo store — Please create a free account to explore all features. No real payments.
+      </div>
+
+      <div className='px-4 sm:px-[7vw] md:px-[5vw] lg:px-[3vw]'>
+        <ToastContainer/>
+        <Navbar />
+        <SearchBar/>
+        
+        <Routes>
+          <Route path='/' element={<Home/>}/>
+          <Route path='/collection' element={<Collection/>}/>
+          <Route path='/about'  element={<About/>}/>
+          <Route path='contact' element={<Contact/>}/>
+          <Route path='/product/:productId' element={<Product/>}/>
+          <Route path='/cart' element={<Cart/>}/>
+          <Route path='/login' element={<Login/>} />
+          <Route path='/place-order' element={<PlaceOrder/>} />
+          <Route path='/orders' element={<Orders/>} />
           <Route path="/add-product" element={<AddProduct />} />
-         <Route path="/debug/products" element={<DebugProducts/>} />
-      </Routes>
-      <Footer/>
-    </div>
+          <Route path="/debug/products" element={<DebugProducts/>} />
+        </Routes>
+        <Footer/>
+      </div>
+    </>
   )
 }
 

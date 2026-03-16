@@ -33,6 +33,7 @@ h1, h2, h3, .prata-regular {
   font-weight: 400;
 }
 
+
 a.active hr {
   display: block;
 }
@@ -102,4 +103,18 @@ input, select, textarea {
     background-color: var(--green-deep);
     color: var(--gold);
   }
+}
+
+.demo-banner {
+  background: #1A2E1A;
+  color: #C9A84C;
+  text-align: center;
+  padding: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #C9A84C;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
 }
